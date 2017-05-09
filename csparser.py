@@ -5,13 +5,16 @@
 from __future__ import print_function, division
 import itertools
 import pprint
-import readline
 import string
 
 
 # .,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.
 # Top-level: Figure out what the user wants
 def main():
+    # Prepare the application
+    import config
+
+
     # Preamble
     print("Code-switching Parser")
     print("'parse <sentence>' to parse, 'exit' to exit")

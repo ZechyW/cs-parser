@@ -1,12 +1,12 @@
 # Zechy Wong
-# 26 Apr 2017
+# 8 May 2017
 # Code-switching parser
 # ---------------------
 # Singapore English Lexicon
 # Includes both general rules and a list of base lexical items
 
 from lexicon.template import Lexicon
-from lib.syntactic_object import SO
+from app.syntactic_object import SO
 
 
 class SgE(Lexicon):

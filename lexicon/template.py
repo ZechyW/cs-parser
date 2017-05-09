@@ -6,6 +6,7 @@
 
 import copy
 
+
 # Decorator
 def warn_undefined(func):
     """
@@ -50,10 +51,10 @@ class Lexicon:
 
         This we leave to individual lexica to define.
 
-        :param token_so_list:
+        :param token_parse_list:
         :return:
         """
-        pass
+        return token_parse_list
 
     # .,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.
     # Common utility functions
@@ -93,13 +94,20 @@ class Lexicon:
         token_parse_list = self.apply_rules(token_parse_list)
 
         # Generate any needed SOs (viz., functional heads and the like)
-        return self.generate_items(token_parse_list)
+        token_parse_list = self.generate_items(token_parse_list)
+
+        # Mark every SO with the ID of this lexicon
+        for token_parse in token_parse_list:
+            for so in token_parse:
+                so.lexicon = self.id
+
+        return token_parse_list
 
     def generate_items(self, token_parse_list):
         """
         Takes a list of parses, where each parse is a list of SOs.
         Recursively generate sub-SOs that are specified in the base SOs
-        :param token_so_list:
+        :param token_parse_list:
         :return:
         """
         # Will return/recurse over this enriched list of parses

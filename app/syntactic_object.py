@@ -1,18 +1,21 @@
 # Zechy Wong
-# 29 Apr 2017
+# 8 May 2017
 # Code-switching parser
 # ---------------------
 # Class for dealing with individual syntactic objects
 
 
 class SO:
-    def __init__(self, category=None, label=None, features=None, subcat=None,
-                 generate=None, children=None):
+    def __init__(self, category=None, label=None, lexicon=None, features=None,
+                 subcat=None, generate=None, children=None):
         # Syntactic category for the SO
         self.category = category
 
         # Will be printed as the display name for the SO
         self.label = label
+
+        # Keep track of (roughly) which lexicon this SO came from
+        self.lexicon = lexicon
 
         # Various features (agreement, etc.)
         self.features = features
@@ -57,6 +60,6 @@ class SO:
         else:
             children = ""
 
-        return ("SO({}, {}{}{}{}{})"
-                "".format(self.category, self.label, features,
-                          subcat, generate, children))
+        return ("SO({}, {}, <{}>{}{}{}{})"
+                "".format(self.category, self.label, self.lexicon,
+                          features, subcat, generate, children))
