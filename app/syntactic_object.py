@@ -63,3 +63,17 @@ class SO:
         return ("SO({}, {}, <{}>{}{}{}{})"
                 "".format(self.category, self.label, self.lexicon,
                           features, subcat, generate, children))
+
+    def to_brackets(self):
+        """
+        Returns a prettified/simplified representation of this SO (in bracket 
+        notation)
+        :return: 
+        """
+        if len(self.children) == 0:
+            return "[{} {}]".format(self.category, self.label)
+        else:
+            return ("[{} {}]"
+                    "".format(self.label,
+                              " ".join(
+                                  [x.to_brackets() for x in self.children])))
