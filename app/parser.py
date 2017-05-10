@@ -1,3 +1,4 @@
+# coding=utf-8
 # Zechy Wong
 # 8 May 2017
 # Code-switching parser
@@ -92,12 +93,16 @@ def check_parse(left, right, parse=None, last_active=0):
             criteria = left[-1].subcat[0]
             if criteria[0] == "right" and subcat_match(criteria[1],
                                                        consider_so):
-                # A match.
+                # A match. Pop last element from left array
                 head = left.pop()
-                parse = SO(category=head.category, label=head.category,
-                           features=head.features,
-                           subcat=head.subcat[1:],
-                           children=[head, consider_so])
+                parse = merge(head=head,
+                              complement=consider_so,
+                              head_direction="left",
+                              new_subcat=head.subcat[1:])
+                if not parse:
+                    # Poopsy, merge failed
+                    return False
+
                 return check_parse(left, right, parse)
 
         if len(right) > 0 and len(right[0].subcat) > 0:
@@ -105,12 +110,16 @@ def check_parse(left, right, parse=None, last_active=0):
             criteria = right[0].subcat[0]
             if criteria[0] == "left" and subcat_match(criteria[1],
                                                       consider_so):
-                # A match.
+                # A match. Pop first element from right array
                 head = right.pop(0)
-                parse = SO(category=head.category, label=head.category,
-                           features=head.features,
-                           subcat=head.subcat[1:],
-                           children=[consider_so, head])
+                parse = merge(head=head,
+                              complement=consider_so,
+                              head_direction="right",
+                              new_subcat=head.subcat[1:])
+                if not parse:
+                    # Poopsy, merge failed
+                    return False
+
                 return check_parse(left, right, parse)
 
         # Still here? We haven't found anything close (because we want to
@@ -193,22 +202,37 @@ def merge(head, complement, head_direction, new_subcat):
     """
     parent = SO()
 
+    # Category and label
+    # (Label will be the category as well, for complex SOs)
+    parent.category = head.category
+    parent.label = head.category
+
+    # Copy Features
+    parent.features = head.features[:]
+
+    # Save new subcat list
+    parent.subcat = new_subcat
+
+    # Check if lexicon switch has occurred
+    head_lexicon = head.last_phase_lexicon()
+    complement_lexicon = complement.last_phase_lexicon()
+
+    lexicon_match = \
+        head_lexicon == {None} or complement_lexicon == {None} or \
+        head_lexicon == complement_lexicon
+
+    if not lexicon_match:
+        # Two possibilities:
+        # 1) head is a phase_head, we let it slide
+        # 2) 🔥 HCF 🔥 🚒🚒🚒
+        if head.category not in config.phase_heads:
+            return False
+
     # Insert children SOs
     assert head_direction == "left" or head_direction == "right"
     if head_direction == "left":
         parent.children = [head, complement]
     elif head_direction == "right":
         parent.children = [complement, head]
-
-    # Category and label
-    # (Label will be the category as well, for complex SOs)
-    parent.category = head.category
-    parent.label = head.label
-
-    # Save new subcat list
-    parent.subcat = new_subcat
-
-    # Check if lexicon switch has occurred
-    pass
 
     return parent

@@ -1,8 +1,11 @@
 # Zechy Wong
-# 8 May 2017
+# 9 May 2017
 # Code-switching parser
 # ---------------------
 # Class for dealing with individual syntactic objects
+
+import config
+import lexicon
 
 
 class SO:
@@ -77,3 +80,33 @@ class SO:
                     "".format(self.label,
                               " ".join(
                                   [x.to_brackets() for x in self.children])))
+
+    def last_phase_lexicon(self):
+        """
+        Searches through the SO's hierarchy to determine which lexica the 
+        last phase (as determined by config.phase_heads) is matched with.
+        Returns a set of the relevant lexica 
+        Will contain None if the last phase was not marked (i.e., it consisted 
+        completely of phonologically null elements)
+        :return: 
+        """
+        # Base cases
+        # 1) No children
+        if len(self.children) == 0:
+            return {self.lexicon}
+
+        # 2) Is a phase head
+        if self.category in config.phase_heads:
+            return {self.lexicon}
+
+        # Recursive cases
+        return_set = set()
+        for child in self.children:
+            return_set.update(child.last_phase_lexicon())
+
+        # Trim None out if there is *any* lexicon-marked item in the current
+        # phase
+        if len(return_set) > 1 and None in return_set:
+            return_set.remove(None)
+
+        return return_set

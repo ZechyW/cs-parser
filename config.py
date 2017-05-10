@@ -4,6 +4,8 @@
 # ---------------------
 # General configuration/initialisation options
 
+import lexicon
+
 # Print debugging output?  (Can be pretty verbose)
 debug = True
 
@@ -16,8 +18,6 @@ debug = True
 phase_heads = ["v", "c"]
 
 # Initialise lexica
-import lexicon
-
 lexica = [
     lexicon.SgE(),
     lexicon.Mandarin()

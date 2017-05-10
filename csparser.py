@@ -71,14 +71,10 @@ def command_parse(user_input):
                     or mod_name == "config":
                 del sys.modules[mod_name]
 
-        application_modules = ["app", "lexicon", "config"]
-        for mod_name in application_modules:
-            importlib.import_module(mod_name)
-
         return Result(
             "reload",
             "Reloaded application modules. "
-            "(Except not really -- Currently buggy)"
+            "(Except not really -- May be buggy)"
         )
     elif words[0] == "help":
         print(help_text)

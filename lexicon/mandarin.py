@@ -56,20 +56,32 @@ class Mandarin(Lexicon):
         :return:
         """
         return {
-            # Common nouns
-            "dian4 nao3": [
-                SO(category="N",
-                   label="电脑"),
+            # Pronouns
+            "ta1": [
                 SO(category="D",
-                   label="电脑")
+                   label="他")
+            ],
+
+            # Common nouns
+            "ji1 fan4": [
+                SO(category="N",
+                   label="鸡饭"),
+                SO(category="D",
+                   label="鸡饭")
             ],
 
             # Verbs
-            "wan2": [
+            "chi1": [
                 SO(category="V",
-                   label="玩",
+                   label="吃",
                    subcat=[
                        ("right", SO("D"))
+                   ],
+                   generate=[
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
                    ])
             ],
 
@@ -78,7 +90,7 @@ class Mandarin(Lexicon):
                 SO(category="T",
                    label="了",
                    subcat=[
-                       ("left", SO("V")),
+                       ("left", SO("v")),
                        ("left", SO("D"))  # Subject
                    ])
             ],
@@ -89,10 +101,10 @@ class Mandarin(Lexicon):
                    label="的",
                    features=["Rel"],
                    generate=[
-                       # Null T selecting a V to the left
+                       # Null T selecting a v to the left
                        ("left", SO("T", Lexicon.null_label,
                                    subcat=[
-                                       ("left", SO("V"))
+                                       ("left", SO("v"))
                                    ])),
                        ("left", SO("C", Lexicon.null_label,
                                    features=["Rel"],

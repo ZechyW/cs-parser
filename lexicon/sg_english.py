@@ -109,8 +109,8 @@ class SgE(Lexicon):
                 ("right", SO("c", Lexicon.null_label,
                              features=["Rel"],
                              subcat=[
-                                 ("left", SO("N")),
-                                 ("right", SO("C", features=["Rel"]))
+                                 ("right", SO("C", features=["Rel"])),
+                                 ("left", SO("N"))
                              ]))
             )
             return copied_parse
@@ -151,46 +151,128 @@ class SgE(Lexicon):
 
             # Verbs
             "eat": [
-                SO("V", "eat", ["inf"],
-                   subcat=[("right", SO("D"))]),
-                SO("V", "eat", ["inf"])
-            ],
-            "eats": [
-                # Transitive
                 SO("V", "eat",
                    subcat=[("right", SO("D"))],
-                   generate=[("left",
-                              SO("T", "-s",
-                                 subcat=[("right", SO("V")),
-                                         ("left", SO("D"))
-                                         ]))]
-                   ),
+                   generate=[
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ]),
+                SO("V", "eat",
+                   generate=[
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ])
+            ],
+
+            "eats": [
+                # Transitive; T selects for subject
+                SO("V", "eat",
+                   subcat=[("right", SO("D"))],
+                   generate=[
+                       ("left", SO("T", "-s",
+                                   subcat=[
+                                       ("right", SO("v")),
+                                       ("left", SO("D"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ]),
+                # Transitive; T does not select for subject
+                # TODO: Abstract into a feature->rule for Vs
+                SO("V", "eat",
+                   subcat=[("right", SO("D"))],
+                   generate=[
+                       ("left", SO("T", "-s",
+                                   subcat=[
+                                       ("right", SO("v"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ]),
+
                 # Intransitive
                 SO("V", "eat",
-                   generate=[("left",
-                              SO("T", "-s",
-                                 subcat=[("right", SO("V")),
-                                         ("left", SO("D"))
-                                         ]))]
-                   )
+                   generate=[
+                       ("left", SO("T", "-s",
+                                   subcat=[
+                                       ("right", SO("v")),
+                                       ("left", SO("D"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ]),
+                # Intransitive; T does not select for subject
+                SO("V", "eat",
+                   generate=[
+                       ("left", SO("T", "-s",
+                                   subcat=[
+                                       ("right", SO("v"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ])
             ],
+
             "ate": [
                 SO("V", "eat",
                    subcat=[("right", SO("D"))],
-                   generate=[("left",
-                              SO("T", "-ed",
-                                 subcat=[("right", SO("V")),
-                                         ("left", SO("D"))
-                                         ]))]
-                   ),
+                   generate=[
+                       ("left", SO("T", "-ed",
+                                   subcat=[("right", SO("v")),
+                                           ("left", SO("D"))
+                                           ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ]),
                 SO("V", "eat",
-                   generate=[("left",
-                              SO("T", "-ed",
-                                 subcat=[
-                                     ("right", SO("V")),
-                                     ("left", SO("D"))
-                                 ]))]
-                   )
+                   subcat=[("right", SO("D"))],
+                   generate=[
+                       ("left", SO("T", "-ed",
+                                   subcat=[
+                                       ("right", SO("v"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ]),
+                SO("V", "eat",
+                   generate=[
+                       ("left", SO("T", "-ed",
+                                   subcat=[
+                                       ("right", SO("v")),
+                                       ("left", SO("D"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ]),
+                SO("V", "eat",
+                   generate=[
+                       ("left", SO("T", "-ed",
+                                   subcat=[
+                                       ("right", SO("v"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ])
             ],
 
             "like": [
@@ -198,36 +280,85 @@ class SgE(Lexicon):
                 SO("V", "like",
                    subcat=[
                        ("right", SO("T"))
+                   ],
+                   generate=[
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
                    ])
             ],
 
             "likes": [
                 SO("V", "like",
                    generate=[
-                       ("left",
-                        SO("T", "-s",
-                           subcat=[
-                               ("right", SO("V")),
-                               ("left", SO("D"))
-                           ]))
+                       ("left", SO("T", "-s",
+                                   subcat=[
+                                       ("right", SO("v")),
+                                       ("left", SO("D"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
+                   ],
+                   subcat=[
+                       ("right", SO("T"))
+                   ]),
+                # T no subject
+                SO("V", "like",
+                   generate=[
+                       ("left", SO("T", "-s",
+                                   subcat=[
+                                       ("right", SO("v"))
+                                   ])),
+                       ("left", SO("v", Lexicon.null_label,
+                                   subcat=[
+                                       ("right", SO("V"))
+                                   ]))
                    ],
                    subcat=[
                        ("right", SO("T"))
                    ])
             ],
 
-            # Inflections
+            # Tense/Aspect
             "-ed": [
                 SO("T", "-ed",
                    subcat=[
-                       ("left", SO("V"))
+                       ("left", SO("v"))
                    ])
             ],
 
             "to": [
                 SO("T", "to",
                    subcat=[
-                       ("right", SO("V"))
+                       ("right", SO("v"))
+                   ])
+            ],
+
+            "already": [
+                SO(category="T",
+                   label="already",
+                   subcat=[
+                       ("left", SO("v")),
+                       ("left", SO("D"))  # Subject
+                   ])
+            ],
+
+            # Relative clause
+            "who": [
+                SO(category="D",
+                   label="who",
+                   features=["Rel"],
+                   generate=[
+                       # C to the right that selects for a T
+                       ("right", SO("C", Lexicon.null_label,
+                                    features=["Rel"],
+                                    subcat=[
+                                        ("right", SO("T")),
+                                        ("left", SO("D", features=["Rel"]))
+                                    ]))
                    ])
             ]
         }
