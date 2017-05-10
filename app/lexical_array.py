@@ -1,5 +1,5 @@
 # Zechy Wong
-# 8 May 2017
+# 10 May 2017
 # Code-switching parser
 # ---------------------
 # Class for dealing with raw input and turning them into lexical items (i.e.,
@@ -52,7 +52,11 @@ def tokenise(input_string):
     :param input_string: 
     :return: 
     """
-    return input_string.lower().translate(None, string.punctuation).split()
+    remove_punct = set(string.punctuation)
+    # Hyphens needed for some tokens
+    remove_punct.remove("-")
+    remove_punct = ''.join(remove_punct)
+    return input_string.lower().translate(None, remove_punct).split()
 
 
 def lookup_tokens(tokens, mapped=None):

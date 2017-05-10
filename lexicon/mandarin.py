@@ -1,6 +1,6 @@
 # coding=utf-8
 # Zechy Wong
-# 8 May 2017
+# 10 May 2017
 # Code-switching parser
 # ---------------------
 # (Singapore) Mandarin Lexicon
@@ -92,6 +92,11 @@ class Mandarin(Lexicon):
                    subcat=[
                        ("left", SO("v")),
                        ("left", SO("D"))  # Subject
+                   ]),
+                SO(category="T",
+                   label="了",
+                   subcat=[
+                       ("left", SO("v"))
                    ])
             ],
 
