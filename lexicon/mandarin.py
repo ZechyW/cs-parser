@@ -1,3 +1,4 @@
+# coding=utf-8
 # Zechy Wong
 # 8 May 2017
 # Code-switching parser
@@ -55,19 +56,51 @@ class Mandarin(Lexicon):
         :return:
         """
         return {
-            # Proper nouns
-            "li si": [
+            # Common nouns
+            "dian4 nao3": [
+                SO(category="N",
+                   label="电脑"),
                 SO(category="D",
-                   label="li si")
+                   label="电脑")
+            ],
+
+            # Verbs
+            "wan2": [
+                SO(category="V",
+                   label="玩",
+                   subcat=[
+                       ("right", SO("D"))
+                   ])
             ],
 
             # Tense/Aspect
-            "le": [
+            "le4": [
                 SO(category="T",
-                   label="le",
+                   label="了",
                    subcat=[
                        ("left", SO("V")),
-                       ("left", SO("D"))
+                       ("left", SO("D"))  # Subject
+                   ])
+            ],
+
+            # Relative clause
+            "de4": [
+                SO(category="D",
+                   label="的",
+                   features=["Rel"],
+                   generate=[
+                       # Null T selecting a V to the left
+                       ("left", SO("T", Lexicon.null_label,
+                                   subcat=[
+                                       ("left", SO("V"))
+                                   ])),
+                       ("left", SO("C", Lexicon.null_label,
+                                   features=["Rel"],
+                                   subcat=[
+                                       ("left", SO("T")),
+                                       # Looks for relative D on its right
+                                       ("right", SO("D", features=["Rel"]))
+                                   ]))
                    ])
             ]
         }

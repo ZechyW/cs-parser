@@ -4,6 +4,6 @@
 # ---------------------
 # Helper classes
 
-from app.lexical_array import LexicalArray
-from app.syntactic_object import SO
-from app.parser import Parser
+# from app.lexical_array import LexicalArray
+# from app.syntactic_object import SO
+# from app.parser import Parser

@@ -1,3 +1,4 @@
+# coding=utf-8
 # Zechy Wong
 # 26 Apr 2017
 # Code-switching parser
@@ -24,6 +25,9 @@ def warn_undefined(func):
 
 
 class Lexicon:
+    # Label for unpronounced items (e.g., functional heads)
+    null_label = "∅"
+
     def __init__(self):
         # We expect all lexica to have a set of basic rules and a set of base
         # lexical items.
@@ -96,10 +100,12 @@ class Lexicon:
         # Generate any needed SOs (viz., functional heads and the like)
         token_parse_list = self.generate_items(token_parse_list)
 
-        # Mark every SO with the ID of this lexicon
+        # Mark every SO with the ID of this lexicon (unless it is
+        # phonologically null)
         for token_parse in token_parse_list:
             for so in token_parse:
-                so.lexicon = self.id
+                if so.label != Lexicon.null_label:
+                    so.lexicon = self.id
 
         return token_parse_list
 

@@ -4,24 +4,35 @@
 
 from __future__ import print_function, division
 
-import pprint
-import readline  # For editing history and the like
-import string
+import importlib
 
-from app import LexicalArray, SO, Parser
+# For editing history and the like
+try:
+    import readline
+except ImportError:
+    pass
+
+import sys
+
+import app.parser
 import config
-
 
 # .,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.-'~'-.,__,.
 # Top-level: Figure out what the user wants
+help_text = ("'parse <sentence>' to parse, 'reload' to reload application, "
+             "'exit' to exit")
+
+
 def main():
     # Preamble
     print("Code-switching Parser")
-    print("'parse <sentence>' to parse, 'exit' to exit")
+    print(help_text)
     # Main IO loop
     exit_flag = False
     while not exit_flag:
         user_input = raw_input("> ")
+        if user_input == "":
+            continue
         result = command_parse(user_input)
         if result.command == "exit":
             exit_flag = True
@@ -49,8 +60,29 @@ def command_parse(user_input):
             ################################################
             # Here is the actual call to the Parser module #
             ################################################
-            Parser.parse_string(" ".join(words[1:]))
+            app.parser.parse_string(" ".join(words[1:]))
         )
+    elif words[0] == "reload":
+        # Trash the application modules and re-import them; that should work
+        current_modules = list(sys.modules.keys())
+        for mod_name in current_modules:
+            if mod_name.startswith("app.") or mod_name.startswith("lexicon.") \
+                    or mod_name == "app" or mod_name == "lexicon" \
+                    or mod_name == "config":
+                del sys.modules[mod_name]
+
+        application_modules = ["app", "lexicon", "config"]
+        for mod_name in application_modules:
+            importlib.import_module(mod_name)
+
+        return Result(
+            "reload",
+            "Reloaded application modules. "
+            "(Except not really -- Currently buggy)"
+        )
+    elif words[0] == "help":
+        print(help_text)
+        return Result(True, True)
     else:
         # Invalid input
         return Result(False, False)
@@ -58,12 +90,26 @@ def command_parse(user_input):
 
 # Do whatever we need to do to the return values and show them to the user
 def display_result(result):
-    if result.command == "parse":
-        if result.value:
-            for parse in result.value:
-                print(parse.to_brackets())
-    else:
+    if result.command is False:
         print("Invalid command.")
+    elif result.command is True:
+        # No output
+        return
+    elif result.command == "parse":
+        # Pretty-print a bracket representation of the returned parses
+        if result.value:
+            print()
+            print("Valid parses found:")
+            for parse in result.value:
+                print("-----")
+                print(parse.to_brackets())
+                if config.debug:
+                    print(parse)
+        else:
+            print("No valid parses.")
+    else:
+        # Generic result handling
+        print("{}: {}".format(result.command, result.value))
 
 
 if __name__ == "__main__":
